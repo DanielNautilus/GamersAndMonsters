@@ -3,7 +3,7 @@ using GamersAndMonsters.Classes.Models;
 
 var logger = new GameLogger();
 
-var hero1 = new Hero("Hero1",33,new int[] { 1,2 }, 10, 10, logger);
+var hero1 = new Hero("Hero1",0,new int[] { 1,2 }, 10, 10, logger);
 var monster1 = new Monster("Monster1", 33, new int[] { 1, 2 }, 15, 10, logger);
 
 //while(!monster1.isDead()) hero1.Hit(monster1);

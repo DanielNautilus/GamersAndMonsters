@@ -20,7 +20,7 @@ namespace GamersAndMonsters.Classes.Models
 
         private static readonly int minDamageDiapasonValue = 1;
         private static readonly int maxDamageDiapasonValue = int.MaxValue;
-        private static readonly int maxDamageDiapasonCount = 2;
+        private static readonly int maxDamageDiapasonLength = 2;
         
         private static List<String> creaturesNames = new List<string>();
         
@@ -48,97 +48,61 @@ namespace GamersAndMonsters.Classes.Models
             )
         {
             _logger = logger;
-
-
+            FieldsValidator.Initialize(logger);
             validateName(name);
             Name = name;
-
             validateHealth(health);
             Health = health;
             MaxHealth = health;
-
             validateDamageDiapason(damageDiapason);
             DamageDiapason = new int[]
-            {   
+            {
                 damageDiapason.Min(),
                 damageDiapason.Max()
             };
-
             validateAttack(attack);
             Attack = attack;
-
             validateDefence(defence);
-             Defence = defence;
-
+            Defence = defence;
             creaturesNames.Add(name);
             _logger.LogCreatureCreation(this);
-        }
-        private void validateRange(int value, int min, int max, string paramName) {
-            if (value < min || value > max)
-            {
-                _logger.LogError($"Creature {paramName.ToUpper()} should between {min} - {max}");
-                throw new ArgumentOutOfRangeException(paramName, $"Value should be between {min} and {max}.");
-            }
-        }
-        private void validateRange(int[] value, int min, int max, string paramName)
-        {
-            if (value.Min() < min || value.Max() > max)
-            {
-                _logger.LogError($"Creature must have {paramName.ToUpper()} between {min} - {max}");
-                throw new ArgumentOutOfRangeException(paramName, $"Value should be between {min} and {max}.");
-            }
         }
 
         private void validateName(String name)
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                _logger.LogError($"You can't create Creature with {name} is contains only spaces or empty");
-                throw new ArgumentException("Name cannot be empty or null.");
-            }
-            if (creaturesNames.Contains(name))
-            {
-                _logger.LogError($"You can't create Creature with {name} is busy");
-                throw new ArgumentException($"Creature {name} is busy");
-            }
+            FieldsValidator.ValidateName(name, creaturesNames);
+        } 
+
+        private void validateHealth(int health) {
+            FieldsValidator.ValidateRange(health, minHealth, maxHealth, nameof(health));
         }
-        private void validateHealth(int health)
-        {
-            validateRange(health, minHealth, maxHealth, nameof(health));
+
+        private void validateDamageDiapason(int[] damageDiapason) { 
+            FieldsValidator.ValidateDiapason(damageDiapason, maxDamageDiapasonLength, minDamageDiapasonValue, maxDamageDiapasonValue, nameof(damageDiapason));
         }
-        private void validateDamageDiapason(int[] damageDiapason)
+
+        private void validateAttack(int attack)
         {
-            if (damageDiapason.Length > 2)
-            {
-                _logger.LogError($"You can't create Creature with a damage diapason length greater than {maxDamageDiapasonCount}");
-                throw new ArgumentException($"Damage diapason length should not be greater than {maxDamageDiapasonCount}");
-            }
-            validateRange(damageDiapason, minDamageDiapasonValue, maxDamageDiapasonValue, nameof(damageDiapason));
+            FieldsValidator.ValidateRange(attack, minAttack, maxAttack, nameof(attack));
+        }
+        private void validateDefence(int defence)
+        {
+            FieldsValidator.ValidateRange(defence, minDefence, maxDefence, nameof(defence));
         }
 
         protected internal void Hit(Creature defender)
         {
-            if (!ValidateHit(defender)) return;
+            if (!IsValidHit(defender)) return;
             if (!IsSuccessefulHit(defender))  return;
 
-            var dealedDamage = dealDamage(defender);
+            var dealedDamage = DealDamage(defender);
             _logger.LogAttack(this, defender, dealedDamage);
 
             if (defender.isDead()) { _logger.LogCreatureDead(defender); }
             
         }
-        private bool IsSuccessefulHit(Creature defender)
-        {
-            var attackModificator = CalculateAttackModificator(defender.Defence);
-            var tossDiceResults = Randomizer.TossDice(attackModificator);
-            if (!isAvailiableToAttack(tossDiceResults))
-            {
-                _logger.LogAttackMissed(this, defender);
-                return false;
-            }
-            return true;
-        }
-        private bool ValidateHit(Creature defender)
+
+        private bool IsValidHit(Creature defender)
         {
             if (this == defender)
             {
@@ -160,16 +124,19 @@ namespace GamersAndMonsters.Classes.Models
             return true;
         }
 
-        private void validateAttack(int attack)
+        private bool IsSuccessefulHit(Creature defender)
         {
-            validateRange(attack, minAttack, maxAttack, nameof(attack));
+            var attackModificator = CalculateAttackModificator(defender.Defence);
+            var tossDiceResults = Randomizer.TossDice(attackModificator);
+            if (!isAvailiableToAttack(tossDiceResults))
+            {
+                _logger.LogAttackMissed(this, defender);
+                return false;
+            }
+            return true;
         }
-        private void validateDefence(int defence)
-        {
-            validateRange(defence, minDefence, maxDefence, nameof(defence));
-        }
-
-        private int CalculateAttackModificator(int defenderDefense) => (Attack > defenderDefense) ? Attack - defenderDefense + 1 : 1;
+        
+        private int CalculateAttackModificator(int defenderDefense) => Attack > defenderDefense ? Attack - defenderDefense + 1 : 1;
 
         private int getDamageDeal() => Randomizer.getRandomValueInDiapason(DamageDiapason);
 
@@ -184,7 +151,7 @@ namespace GamersAndMonsters.Classes.Models
 
         public bool isDead() => Health <= 0 ? true : false;
 
-        private int dealDamage(Creature defender)
+        private int DealDamage(Creature defender)
         {
             var currentDefenderHealth = defender.Health;
             var calculatedDamage = getDamageDeal();

@@ -14,7 +14,7 @@ namespace GamersAndMonsters.Classes.Models
 
         private static readonly int minDamageDiapasonValue = 1;
         private static readonly int maxDamageDiapasonValue = int.MaxValue;
-        private static readonly int maxDamageDiapasonLength = 2;
+        private static readonly int DamageDiapasonLength = 2;
         
         private static List<String> creaturesNames = new List<string>();
         
@@ -109,7 +109,7 @@ namespace GamersAndMonsters.Classes.Models
         
         private int CalculateAttackModificator(int defenderDefense) => Attack > defenderDefense ? Attack - defenderDefense + 1 : 1;
 
-        private int getDamageDeal() => Randomizer.getRandomValueInDiapason(DamageDiapason);
+        private int CalculatedDamageDeal() => Randomizer.getRandomValueInDiapason(DamageDiapason);
 
         private bool isAvailiableToAttack(List<int> tossDiceResults)
         {
@@ -125,7 +125,7 @@ namespace GamersAndMonsters.Classes.Models
         private int DealDamage(Creature defender)
         {
             var currentDefenderHealth = defender.Health;
-            var calculatedDamage = getDamageDeal();
+            var calculatedDamage = CalculatedDamageDeal();
             if (calculatedDamage > currentDefenderHealth)
             {
                 defender.Health = 0;
@@ -137,6 +137,7 @@ namespace GamersAndMonsters.Classes.Models
                 return calculatedDamage;
             }
         }
+        
         private void ValidateName(String name)
         {
             FieldsValidator.ValidateName(name, creaturesNames);
@@ -149,7 +150,7 @@ namespace GamersAndMonsters.Classes.Models
 
         private void ValidateDamageDiapason(int[] damageDiapason)
         {
-            FieldsValidator.ValidateDiapason(damageDiapason, maxDamageDiapasonLength, minDamageDiapasonValue, maxDamageDiapasonValue, nameof(damageDiapason));
+            FieldsValidator.ValidateDiapason(damageDiapason, DamageDiapasonLength, minDamageDiapasonValue, maxDamageDiapasonValue, nameof(damageDiapason));
         }
 
         private void ValidateAttack(int attack)

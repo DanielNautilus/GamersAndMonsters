@@ -3,7 +3,7 @@ namespace GamersAndMonsters.Classes.Helpers
 {
     internal static class FieldsValidator
     {
-        private static GameLogger _logger;
+        private static GameLogger? _logger;
 
         public static void Initialize(GameLogger logger)
         {

@@ -9,7 +9,22 @@ namespace GamersAndMonsters.Classes.Models
 {
     internal class Monster : Creature
     {
-        public Monster(string Name, int Health, int[] DamageDiapason, int Attack, int Defense, GameLogger logger) : base(Name, Health, DamageDiapason, Attack, Defense, logger)
+        public Monster(
+           string name,
+           int health,
+           int[] damageDiapason,
+           int attack,
+           int defense,
+           GameLogger logger
+           )
+           : base(
+               name,
+               health,
+               damageDiapason,
+               attack,
+               defense,
+               logger
+               )
         {
         }
     }

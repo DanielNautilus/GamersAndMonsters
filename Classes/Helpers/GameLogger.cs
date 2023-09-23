@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GamersAndMonsters.Classes.Models;
+﻿using GamersAndMonsters.Classes.Models;
 
 namespace GamersAndMonsters.Classes.Helpers
 {
 
     internal class GameLogger
     {
+        public GameLogger() 
+        {
+            Log("Game started");
+        }
         private void Log(string message)
         {
             Console.WriteLine($"[Game Log] {message}");
@@ -18,6 +16,11 @@ namespace GamersAndMonsters.Classes.Helpers
         public void LogError(string message)
         {
             Log($"[Error] {message}");
+            Log("Game ended");
+        }
+        public void LogWarning(string message)
+        {
+            Log($"[Warning] {message}");
         }
         public void LogCreatureCreation(Creature creation)
         {
@@ -26,7 +29,7 @@ namespace GamersAndMonsters.Classes.Helpers
                 $"Health - {creation.Health}\n" +
                 $"Attack - {creation.Attack}\n" +
                 $"Damage Diapason: {creation.DamageDiapason[0]} - {creation.DamageDiapason[1]}\n" +
-                $"Defense - {creation.Defense} \n");
+                $"Defense - {creation.Defence} \n");
         }
 
         public void LogAttack(Creature assulter, Creature defender, int damage)
@@ -39,34 +42,46 @@ namespace GamersAndMonsters.Classes.Helpers
             Log($"{assulter.Name} attacked {defender.Name} and attack missed.");
         }
 
-        public void LogCannotAttackDead(Creature assulter, Creature defender)
-        {
-            Log($"{assulter.Name} try to attack dead character {defender.Name}.");
-        }
         public void LogHeroHealThemself(Hero hero, int healedHealth)
         {
             Log($"{hero.Name} heal them self on {healedHealth}, current hp: {hero.Health}/{hero.MaxHealth}, charges used {hero.HealCount} of {Hero.MaxHealCount}");
         }
+
         public void LogCreatureDead(Creature creature)
         {
             Log($"{creature.Name} is dead");
         }
-        public void LogErrorDeadCreatureTryToAttack(Creature creature)
+
+        public void LogWarningCannotAttackDead(Creature assulter, Creature defender)
         {
-            LogError($"{creature.GetType().Name} can't attack cuz he is dead : {creature.Name}");
+            LogWarning($"{assulter.GetType().Name}: {assulter.Name} try to attack dead character {defender.GetType().Name}: {defender.Name}.");
         }
-        public void LogErrorDeadHeroTryToHeal(Hero hero)
+
+        public void LogWarningDeadCreatureTryToAttack(Creature creature)
         {
-            LogError($"{hero.GetType().Name} can't heal cuz he is dead : {hero.Name}");
+            LogWarning($"{creature.GetType().Name} can't attack cuz he is dead : {creature.Name}");
         }
-        public void LogErrorHeroTryToHealWithoutCharges(Hero hero)
+
+        public void LogWarningDeadHeroTryToHeal(Hero hero)
         {
-            LogError($"{hero.GetType().Name} can't heal cuz he use all of chargers: {hero.HealCount}/{Hero.MaxHealCount} : {hero.Name}");
+            LogWarning($"{hero.GetType().Name} can't heal cuz he is dead : {hero.Name}");
         }
-        public void LogErrorHeroTryToHealWithMaximumHealth(Hero hero)
+
+        public void LogWarningHeroTryToHealWithoutCharges(Hero hero)
         {
-            LogError($"{hero.GetType().Name} can't heal cuz he actual have maximum hp: {hero.Health}/{hero.MaxHealth} : {hero.Name}");
+            LogWarning($"{hero.GetType().Name} can't heal cuz he use all of charges: {hero.HealCount}/{Hero.MaxHealCount} : {hero.Name}");
         }
+
+        public void LogWarningHeroTryToHealWithMaximumHealth(Hero hero)
+        {
+            LogWarning($"{hero.GetType().Name} can't heal cuz he actual have maximum hp: {hero.Health}/{hero.MaxHealth} : {hero.Name}");
+        }
+
+        public void LogWarningCreatureTryToHitYourself(Creature creature)
+        {
+            LogWarning($"{creature.GetType().Name} can't hit yourself: {creature.Name}");
+        }
+
     }
 
 }

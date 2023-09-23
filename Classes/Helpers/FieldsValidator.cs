@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-
+﻿
 namespace GamersAndMonsters.Classes.Helpers
 {
     internal static class FieldsValidator
@@ -27,7 +21,7 @@ namespace GamersAndMonsters.Classes.Helpers
         
         public static void ValidateDiapason(int[] diapason, int diapasonLength, int min, int max, string diapasonName)
         {
-            ValidateDiapasonLength(diapason, diapasonLength);
+            CheckDiapasonLength(diapason, diapasonLength);
             if (diapason.Min() < min || diapason.Max() > max)
             {
                 _logger.LogError($"Creature must have {diapasonName.ToUpper()} between {min} - {max}");
@@ -35,7 +29,7 @@ namespace GamersAndMonsters.Classes.Helpers
             }
         }
 
-        private static void ValidateDiapasonLength(int[] diapason, int diapasonLength)
+        private static void CheckDiapasonLength(int[] diapason, int diapasonLength)
         {
             if (diapason.Length != diapasonLength)
             {
@@ -54,7 +48,7 @@ namespace GamersAndMonsters.Classes.Helpers
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                _logger.LogError($"You can't create Creature with {name} is contains only spaces or empty");
+                _logger.LogError($"You can't create Creature with Name that contains only spaces or empty");
                 throw new ArgumentNullException("Name cannot be empty or null.");
             }
         }

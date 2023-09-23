@@ -1,10 +1,4 @@
 ﻿using GamersAndMonsters.Classes.Helpers;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GamersAndMonsters.Classes.Models
 {
@@ -37,7 +31,6 @@ namespace GamersAndMonsters.Classes.Models
 
         protected internal int MaxHealth { get; protected set; }
 
-        //TODO: what do with asseting with 0? need add epsilon
         protected Creature(
             string name,
             int health,
@@ -49,45 +42,23 @@ namespace GamersAndMonsters.Classes.Models
         {
             _logger = logger;
             FieldsValidator.Initialize(logger);
-            validateName(name);
+            ValidateName(name);
             Name = name;
-            validateHealth(health);
+            ValidateHealth(health);
             Health = health;
             MaxHealth = health;
-            validateDamageDiapason(damageDiapason);
+            ValidateDamageDiapason(damageDiapason);
             DamageDiapason = new int[]
             {
                 damageDiapason.Min(),
                 damageDiapason.Max()
             };
-            validateAttack(attack);
+            ValidateAttack(attack);
             Attack = attack;
-            validateDefence(defence);
+            ValidateDefence(defence);
             Defence = defence;
             creaturesNames.Add(name);
             _logger.LogCreatureCreation(this);
-        }
-
-        private void validateName(String name)
-        {
-            FieldsValidator.ValidateName(name, creaturesNames);
-        } 
-
-        private void validateHealth(int health) {
-            FieldsValidator.ValidateRange(health, minHealth, maxHealth, nameof(health));
-        }
-
-        private void validateDamageDiapason(int[] damageDiapason) { 
-            FieldsValidator.ValidateDiapason(damageDiapason, maxDamageDiapasonLength, minDamageDiapasonValue, maxDamageDiapasonValue, nameof(damageDiapason));
-        }
-
-        private void validateAttack(int attack)
-        {
-            FieldsValidator.ValidateRange(attack, minAttack, maxAttack, nameof(attack));
-        }
-        private void validateDefence(int defence)
-        {
-            FieldsValidator.ValidateRange(defence, minDefence, maxDefence, nameof(defence));
         }
 
         protected internal void Hit(Creature defender)
@@ -165,6 +136,29 @@ namespace GamersAndMonsters.Classes.Models
                 defender.Health -= calculatedDamage;
                 return calculatedDamage;
             }
+        }
+        private void ValidateName(String name)
+        {
+            FieldsValidator.ValidateName(name, creaturesNames);
+        }
+
+        private void ValidateHealth(int health)
+        {
+            FieldsValidator.ValidateRange(health, minHealth, maxHealth, nameof(health));
+        }
+
+        private void ValidateDamageDiapason(int[] damageDiapason)
+        {
+            FieldsValidator.ValidateDiapason(damageDiapason, maxDamageDiapasonLength, minDamageDiapasonValue, maxDamageDiapasonValue, nameof(damageDiapason));
+        }
+
+        private void ValidateAttack(int attack)
+        {
+            FieldsValidator.ValidateRange(attack, minAttack, maxAttack, nameof(attack));
+        }
+        private void ValidateDefence(int defence)
+        {
+            FieldsValidator.ValidateRange(defence, minDefence, maxDefence, nameof(defence));
         }
 
     }

@@ -11,16 +11,15 @@ namespace GamersAndMonsters.Classes.Models
         private static readonly int maxAttack = 30;
         private static readonly int minDefence = 1;
         private static readonly int maxDefence = 30;
-
         private static readonly int minDamageDiapasonValue = 1;
         private static readonly int maxDamageDiapasonValue = int.MaxValue;
         private static readonly int DamageDiapasonLength = 2;
-        
         private static List<String> creaturesNames = new List<string>();
         
         protected readonly GameLogger _logger;
 
         protected internal string Name { get; }
+
         protected internal int Attack { get; protected set; }
 
         protected internal int Defence { get; protected set; }
@@ -30,7 +29,7 @@ namespace GamersAndMonsters.Classes.Models
         protected internal int Health { get; protected set; }
 
         protected internal int MaxHealth { get; protected set; }
-
+        //immutabel elem
         protected Creature(
             string name,
             int health,
@@ -44,7 +43,7 @@ namespace GamersAndMonsters.Classes.Models
             FieldsValidator.Initialize(logger);
             ValidateName(name);
             Name = name;
-            ValidateHealth(health);
+            ValidateNumberProperty(health, minHealth, maxHealth, nameof(health));
             Health = health;
             MaxHealth = health;
             ValidateDamageDiapason(damageDiapason);
@@ -53,9 +52,9 @@ namespace GamersAndMonsters.Classes.Models
                 damageDiapason.Min(),
                 damageDiapason.Max()
             };
-            ValidateAttack(attack);
+            ValidateNumberProperty(attack, minAttack, maxAttack, nameof(attack));
             Attack = attack;
-            ValidateDefence(defence);
+            ValidateNumberProperty(defence, minDefence, maxDefence, nameof(defence));
             Defence = defence;
             creaturesNames.Add(name);
             _logger.LogCreatureCreation(this);
@@ -113,14 +112,14 @@ namespace GamersAndMonsters.Classes.Models
 
         private bool isAvailiableToAttack(List<int> tossDiceResults)
         {
-            foreach(var tosseDice  in tossDiceResults)
+            foreach(var tosseDice in tossDiceResults)
             {
                 if (tosseDice > minTossToSuccessAttack) return true;
             }
             return false;
         }
 
-        public bool isDead() => Health <= 0 ? true : false;
+        public bool isDead() => Health <= 0;
 
         private int DealDamage(Creature defender)
         {
@@ -143,23 +142,14 @@ namespace GamersAndMonsters.Classes.Models
             FieldsValidator.ValidateName(name, creaturesNames);
         }
 
-        private void ValidateHealth(int health)
+        private void ValidateNumberProperty(int property, int minPropertyValue, int maxPropertyValue, string propertyName)
         {
-            FieldsValidator.ValidateRange(health, minHealth, maxHealth, nameof(health));
+            FieldsValidator.ValidateRange(property, minPropertyValue, maxPropertyValue, propertyName);
         }
-
+        
         private void ValidateDamageDiapason(int[] damageDiapason)
         {
             FieldsValidator.ValidateDiapason(damageDiapason, DamageDiapasonLength, minDamageDiapasonValue, maxDamageDiapasonValue, nameof(damageDiapason));
-        }
-
-        private void ValidateAttack(int attack)
-        {
-            FieldsValidator.ValidateRange(attack, minAttack, maxAttack, nameof(attack));
-        }
-        private void ValidateDefence(int defence)
-        {
-            FieldsValidator.ValidateRange(defence, minDefence, maxDefence, nameof(defence));
         }
 
     }
